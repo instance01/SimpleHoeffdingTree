@@ -3,6 +3,19 @@
 Simply calculates the splits based on the amazing Hoeffding bound.
 This is just for research purposes.
 
+Reference paper:
+
+```
+@inproceedings{domingos2000mining,
+  title={Mining high-speed data streams},
+  author={Domingos, Pedro and Hulten, Geoff},
+  booktitle={Proceedings of the sixth ACM SIGKDD international conference on Knowledge discovery and data mining},
+  pages={71--80},
+  year={2000}
+}
+```
+
+
 Sample data:
 
 | Person | Time since license | Gender | Area | Risk class |
