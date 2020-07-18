@@ -29,18 +29,17 @@ class HoeffdingTree:
         return -entropy
 
     def calc_total_attr_entropy(self, kv, i):
+        self.log_debug(kv.keys())
         weighted_sum = 0
         for item in kv.keys():
             entropy = 0
-            self.log_debug(item)
             count = sum(kv[item].values())
             for label_count in kv[item].values():
                 p = label_count / count
                 entropy += p * self.logfunc(p)
-            self.log_debug('e', -entropy)
             weighted_sum += count / i * (-entropy)
-            self.log_debug('w', count, i)
-        self.log_debug('weighted_sum', weighted_sum)
+            self.log_debug('entropy for', item, ": ", -entropy)
+        self.log_debug('weighted_sum:', weighted_sum)
         return weighted_sum
 
     def fit(self, data_columns, label_column):
@@ -48,6 +47,8 @@ class HoeffdingTree:
         for i in range(1, total_len + 1):
             if i % self.Nmin != 0:
                 continue
+
+            self.log_debug(i)
 
             infogains = []
 
@@ -61,10 +62,11 @@ class HoeffdingTree:
 
                 infogain = prior_entropy - total_attr_entropy
                 self.log_debug(
-                    'infogain',
+                    'infogain:',
                     prior_entropy,
+                    "-",
                     total_attr_entropy,
-                    ': ',
+                    '= ',
                     infogain
                 )
                 infogains.append((infogain, attr_name))
@@ -73,6 +75,5 @@ class HoeffdingTree:
             print('All infogains:', infogains)
             eps = self.calc_hoeffding_bound(i)
             if infogains[-1][0] - infogains[-2][0] > eps:
-                # print('All infogains:', infogains)
                 print('Split on:', infogains[-1][1])
             print('')
