@@ -4,13 +4,14 @@ from collections import defaultdict
 
 
 class HoeffdingTree:
-    def __init__(self, Nmin, delta, R, verbose=True):
+    def __init__(self, Nmin, delta, R, logfunc, verbose=True):
         self.Nmin = Nmin
         self.delta = delta
         self.R = R
+        self.logfunc = logfunc
         self.verbose = verbose
 
-    def log(self, *msg):
+    def log_debug(self, *msg):
         if self.verbose:
             print(msg)
 
@@ -24,22 +25,22 @@ class HoeffdingTree:
         entropy = 0
         for label in set(labels):
             p = c[label] / len(labels)
-            entropy += p * math.log2(p)
+            entropy += p * self.logfunc(p)
         return -entropy
 
     def calc_total_attr_entropy(self, kv, i):
         weighted_sum = 0
         for item in kv.keys():
             entropy = 0
-            self.log(item)
+            self.log_debug(item)
             count = sum(kv[item].values())
             for label_count in kv[item].values():
                 p = label_count / count
-                entropy += p * math.log2(p)
-            self.log('e', -entropy)
+                entropy += p * self.logfunc(p)
+            self.log_debug('e', -entropy)
             weighted_sum += count / i * (-entropy)
-            self.log('w', count, i)
-        self.log('weighted_sum', weighted_sum)
+            self.log_debug('w', count, i)
+        self.log_debug('weighted_sum', weighted_sum)
         return weighted_sum
 
     def fit(self, data_columns, label_column):
@@ -59,7 +60,7 @@ class HoeffdingTree:
                 total_attr_entropy = self.calc_total_attr_entropy(kv, i)
 
                 infogain = prior_entropy - total_attr_entropy
-                self.log(
+                self.log_debug(
                     'infogain',
                     prior_entropy,
                     total_attr_entropy,
@@ -79,7 +80,8 @@ def test():
     Nmin = 2
     delta = 0.2
     R = 1
-    tree = HoeffdingTree(Nmin, delta, R)
+    logfunc = math.log2
+    tree = HoeffdingTree(Nmin, delta, R, logfunc)
     data_columns = {
         'time': ['1-2', '2-7', '>7', '1-2', '>7', '1-2', '2-7', '2-7'],
         'gender': ['m', 'm', 'f', 'f', 'm', 'm', 'f', 'm'],
