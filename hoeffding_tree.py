@@ -13,7 +13,7 @@ class HoeffdingTree:
 
     def log_debug(self, *msg):
         if self.verbose:
-            print(msg)
+            print(*msg)
 
     def calc_hoeffding_bound(self, i):
         return (
@@ -70,28 +70,9 @@ class HoeffdingTree:
                 infogains.append((infogain, attr_name))
 
             infogains = sorted(infogains)
+            print('All infogains:', infogains)
             eps = self.calc_hoeffding_bound(i)
             if infogains[-1][0] - infogains[-2][0] > eps:
-                print('All infogains:', infogains)
+                # print('All infogains:', infogains)
                 print('Split on:', infogains[-1][1])
-
-
-def test():
-    Nmin = 2
-    delta = 0.2
-    R = 1
-    logfunc = math.log2
-    tree = HoeffdingTree(Nmin, delta, R, logfunc)
-    data_columns = {
-        'time': ['1-2', '2-7', '>7', '1-2', '>7', '1-2', '2-7', '2-7'],
-        'gender': ['m', 'm', 'f', 'f', 'm', 'm', 'f', 'm'],
-        'area': ['urban', 'rural', 'rural', 'rural', 'rural', 'rural', 'urban', 'urban']
-    }
-    label_columns = [
-        ['low', 'high', 'low', 'high', 'high', 'high', 'low', 'low']
-    ]
-    tree.fit(data_columns, label_columns[0])
-
-
-if __name__ == '__main__':
-    test()
+            print('')
